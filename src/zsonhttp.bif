@@ -1,0 +1,5 @@
+# Options for the ZsonHttp writer.
+
+module LogZsonHttp;
+
+const url: string;
