@@ -44,6 +44,9 @@ namespace logging { namespace writer {
             };
             int connstate;
 
+            void InitConfigOptions();
+            void InitFilterOptions();
+
             void WriteHeader(const string& path);
             void WriteHeaderField(const string& key, const string& value);
             string Timestamp(double t); // Uses current time if t is zero.
@@ -74,6 +77,7 @@ namespace logging { namespace writer {
             const string unset_field = "-";
             const string meta_prefix = "#";
 
+            string endpoint;
             string path;
 
             threading::formatter::Formatter* formatter;

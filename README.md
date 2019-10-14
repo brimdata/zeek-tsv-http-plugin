@@ -95,3 +95,37 @@ or to send all but the `loaded_scripts` log:
 ```
 redef LogZsonHttp::exclude_logs = set(LoadedScripts::LOG);
 ```
+
+#### Sending logs to different endpoints
+
+The `LogZsonHttp::url` endpoint can be overridden on a per-log basis
+by instantiating a `Log::Filter` and passing the url in its
+configuration table. For example: 
+
+```
+@load Zeek/ZsonHttp
+
+# Set this to the URL of your HTTP endpoint
+redef LogZsonHttp::url = "http://localhost:9867/some/endpoint";
+
+event bro_init() &priority=-10
+{
+    # handles HTTP
+    local http_filter: Log::Filter = [
+        $name = "zson-http",
+        $writer = Log::WRITER_ZSONHTTP,
+        $path = "http",
+        $config = table(["url"] = "http://localhost:9877/other/endpoint")
+    ];
+    Log::add_filter(HTTP::LOG, http_filter);
+
+    # handles DNS
+    local dns_filter: Log::Filter = [
+        $name = "zson-dns",
+        $writer = Log::WRITER_ZSONHTTP,
+        $path = "dns",
+        $config = table(["url"] = "http://localhost:9887/and/another/endpoint")
+    ];
+    Log::add_filter(DNS::LOG, dns_filter);
+}
+```

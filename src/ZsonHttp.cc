@@ -30,8 +30,25 @@ ZsonHttp::ZsonHttp(WriterFrontend* frontend) : WriterBackend(frontend)
     databuf2.Clear();
     headerbuf.Clear();
     connstate = CLOSED;
+    InitConfigOptions();
+    InitFilterOptions();
 }
 
+void ZsonHttp::InitConfigOptions()
+{
+    endpoint = BifConst::LogZsonHttp::url->AsString()->CheckString();
+}
+
+void ZsonHttp::InitFilterOptions()
+{
+	const WriterInfo& info = Info();
+
+	for ( WriterInfo::config_map::const_iterator i = info.config.begin(); i != info.config.end(); ++i ) {
+            if ( strcmp(i->first, "url") == 0 ) {
+                endpoint = i->second;
+            }
+        }
+}
 
 bool ZsonHttp::InitFormatter()
 {
@@ -104,7 +121,6 @@ bool ZsonHttp::CurlConnect()
 void ZsonHttp::CurlSetopts()
 {
 
-    string endpoint = BifConst::LogZsonHttp::url->AsString()->CheckString();
 
     PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "Endpoint: %s", endpoint.c_str());
     curl_easy_setopt(curl, CURLOPT_URL, endpoint.c_str());
