@@ -1,7 +1,7 @@
 // See the file "COPYING" in the main distribution directory for copyright.
 
-#ifndef ZEEK_PLUGIN_ZSONHTTP_H
-#define ZEEK_PLUGIN_ZSONHTTP_H
+#ifndef ZEEK_PLUGIN_TSVHTTP_H
+#define ZEEK_PLUGIN_TSVHTTP_H
 
 #include <curl/curl.h>
 
@@ -14,13 +14,13 @@ const int version_minor=3;
 
 namespace logging { namespace writer {
 
-        class ZsonHttp : public WriterBackend {
+        class TsvHttp : public WriterBackend {
         public:
-            explicit ZsonHttp(WriterFrontend* frontend);
-            ~ZsonHttp() override;
+            explicit TsvHttp(WriterFrontend* frontend);
+            ~TsvHttp() override;
 
             static WriterBackend* Instantiate(WriterFrontend* frontend)
-            { return new ZsonHttp(frontend); }
+            { return new TsvHttp(frontend); }
 
         protected:
             bool DoInit(const WriterInfo& info, int num_fields,

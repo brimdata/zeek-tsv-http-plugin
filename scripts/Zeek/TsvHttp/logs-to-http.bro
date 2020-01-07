@@ -1,4 +1,4 @@
-module LogZsonHttp;
+module LogTsvHttp;
 
 event bro_init() &priority=-10
 	{
@@ -12,7 +12,7 @@ event bro_init() &priority=-10
 			next;
 
 		local filter: Log::Filter = [$name = "default-http",
-		                             $writer = Log::WRITER_ZSONHTTP];
+		                             $writer = Log::WRITER_TSVHTTP];
 		Log::add_filter(stream_id, filter);
 		}
 	}

@@ -10,8 +10,8 @@
 #include <curl/easy.h>
 
 #include "Plugin.h"
-#include "ZsonHttp.h"
-#include "zsonhttp.bif.h"
+#include "TsvHttp.h"
+#include "tsvhttp.bif.h"
 
 using namespace logging::writer;
 using namespace threading;
@@ -19,12 +19,13 @@ using threading::Value;
 using threading::Field;
 
 
-size_t ZsonHttp::InvokeReadCallback(char *buffer, size_t size, size_t nitems, void *userdata) {
+size_t TsvHttp::InvokeReadCallback(char *buffer, size_t size, size_t nitems, void *userdata) {
 
-    return ((ZsonHttp*)userdata)->CurlReadCallback(buffer, size, nitems);
+    return ((TsvHttp*)userdata)->CurlReadCallback(buffer, size, nitems);
 }
 
-ZsonHttp::ZsonHttp(WriterFrontend* frontend) : WriterBackend(frontend)
+
+TsvHttp::TsvHttp(WriterFrontend* frontend) : WriterBackend(frontend)
 {
     databuf1.Clear();
     databuf2.Clear();
@@ -34,12 +35,12 @@ ZsonHttp::ZsonHttp(WriterFrontend* frontend) : WriterBackend(frontend)
     InitFilterOptions();
 }
 
-void ZsonHttp::InitConfigOptions()
+void TsvHttp::InitConfigOptions()
 {
-    endpoint = BifConst::LogZsonHttp::url->AsString()->CheckString();
+    endpoint = BifConst::LogTsvHttp::url->AsString()->CheckString();
 }
 
-void ZsonHttp::InitFilterOptions()
+void TsvHttp::InitFilterOptions()
 {
 	const WriterInfo& info = Info();
 
@@ -50,7 +51,7 @@ void ZsonHttp::InitFilterOptions()
         }
 }
 
-bool ZsonHttp::InitFormatter()
+bool TsvHttp::InitFormatter()
 {
 
     formatter = 0;
@@ -70,12 +71,12 @@ bool ZsonHttp::InitFormatter()
     return true;
 }
 
-ZsonHttp::~ZsonHttp()
+TsvHttp::~TsvHttp()
 {
     delete formatter;
 }
 
-void ZsonHttp::WriteHeaderField(const string& key, const string& val)
+void TsvHttp::WriteHeaderField(const string& key, const string& val)
 {
     string str = meta_prefix + key + separator + val + "\n";
     headerbuf.AddRaw(str);
@@ -84,7 +85,7 @@ void ZsonHttp::WriteHeaderField(const string& key, const string& val)
 
 
 
-bool ZsonHttp::CurlConnect()
+bool TsvHttp::CurlConnect()
 {
     if ( curl ) {
         CURLMcode mres = curl_multi_remove_handle(mcurl, curl);
@@ -118,15 +119,15 @@ bool ZsonHttp::CurlConnect()
     return true;
 }
 
-void ZsonHttp::CurlSetopts()
+void TsvHttp::CurlSetopts()
 {
 
 
-    PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "Endpoint: %s", endpoint.c_str());
+    PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "Endpoint: %s", endpoint.c_str());
     curl_easy_setopt(curl, CURLOPT_URL, endpoint.c_str());
 
     curl_easy_setopt(curl, CURLOPT_POST, 1L);
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, ZsonHttp::InvokeReadCallback);
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, TsvHttp::InvokeReadCallback);
     curl_easy_setopt(curl, CURLOPT_READDATA, this);
     // curl_easy_setopt(curl, CURLOPT_UPLOAD_BUFFERSIZE, 16384L); commented pending selecting min version in cmakelists
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
@@ -140,7 +141,7 @@ void ZsonHttp::CurlSetopts()
 }
 
 
-size_t ZsonHttp::CurlReadCallback(char *dest, size_t size, size_t nitems)
+size_t TsvHttp::CurlReadCallback(char *dest, size_t size, size_t nitems)
 {
     size_t n_read = 0;
     size_t max_read = size * nitems;
@@ -163,11 +164,11 @@ size_t ZsonHttp::CurlReadCallback(char *dest, size_t size, size_t nitems)
 
     read_ptr += n_read;
     read_sizeleft -= n_read;
-    PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "ZsonHttp::CurlReadCallback read %zu bytes, %d bytes left", n_read, read_sizeleft);
+    PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "TsvHttp::CurlReadCallback read %zu bytes, %d bytes left", n_read, read_sizeleft);
     return n_read;
 }
 
-void ZsonHttp::SwitchBuffers()
+void TsvHttp::SwitchBuffers()
 {
     ODesc* tmp = read_buffer;
     read_buffer = write_buffer;
@@ -177,7 +178,7 @@ void ZsonHttp::SwitchBuffers()
     read_ptr = read_buffer->Bytes();
 }
 
-bool ZsonHttp::DoInit(const WriterInfo& info, int num_fields, const Field* const * fields)
+bool TsvHttp::DoInit(const WriterInfo& info, int num_fields, const Field* const * fields)
 {
 
     InitFormatter();
@@ -190,13 +191,13 @@ bool ZsonHttp::DoInit(const WriterInfo& info, int num_fields, const Field* const
     CURLcode res = curl_global_init(CURL_GLOBAL_NOTHING); // will likely want to init SSL here at some point
 
     if(res != CURLE_OK) {
-        PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "curl_global_init() failed: %s", curl_easy_strerror(res));
+        PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "curl_global_init() failed: %s", curl_easy_strerror(res));
         return false;
     }
 
     http_headers = curl_slist_append(NULL, "Transfer-Encoding: chunked");
     if (http_headers == NULL) {
-        Error("curl_slist_append() failed, ZsonHttp plugin not starting");
+        Error("curl_slist_append() failed, TsvHttp plugin not starting");
         return false;
     }
 
@@ -205,7 +206,7 @@ bool ZsonHttp::DoInit(const WriterInfo& info, int num_fields, const Field* const
     // chunked transfers
     http_headers = curl_slist_append(http_headers, "Expect:");
     if (http_headers == NULL) {
-        Error("curl_slist_append() failed, ZsonHttp plugin not starting");
+        Error("curl_slist_append() failed, TsvHttp plugin not starting");
         return false;
     }
 
@@ -224,7 +225,7 @@ bool ZsonHttp::DoInit(const WriterInfo& info, int num_fields, const Field* const
     return true;
 }
 
-bool ZsonHttp::CurlSendData() {
+bool TsvHttp::CurlSendData() {
     int running_handles=-1;
 
     if (connstate != SENDING_DATA) {
@@ -243,7 +244,7 @@ bool ZsonHttp::CurlSendData() {
         // or because the underlying socket write buffer is full).
         cb_done=false;
         CURLMcode mres = curl_multi_perform(mcurl, &running_handles);
-        PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "curl_multi_perform done, running handles %d", running_handles);
+        PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "curl_multi_perform done, running handles %d", running_handles);
         if(mres != CURLM_OK) {
             Error(Fmt("curl_multi_perform() failed: %s", curl_multi_strerror(mres)));
             return false;
@@ -258,6 +259,7 @@ bool ZsonHttp::CurlSendData() {
             connstate=CLOSED;
             return true;
         }
+
         if (!cb_done) {
             Warning(Fmt("dropping %d bytes due to write buffer full\n", read_sizeleft));
             read_sizeleft=0;
@@ -267,13 +269,13 @@ bool ZsonHttp::CurlSendData() {
 
     }
 
-    PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "Read buffer drained");
+    PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "Read buffer drained");
     read_buffer->Clear();
 
     return true;
 }
 
-bool ZsonHttp::CurlSendHeader() {
+bool TsvHttp::CurlSendHeader() {
     int running_handles=-1;
     read_sizeleft = headerbuf.Len();
     read_ptr = headerbuf.Bytes();
@@ -282,7 +284,7 @@ bool ZsonHttp::CurlSendHeader() {
     // avoid busy-looping during connection setup.
     while (read_sizeleft) {
         CURLMcode mres = curl_multi_perform(mcurl, &running_handles);
-        PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "curl_multi_perform done, running handles %d", running_handles);
+        PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "curl_multi_perform done, running handles %d", running_handles);
         if(mres != CURLM_OK) {
             Error(Fmt("curl_multi_perform() failed: %s", curl_multi_strerror(mres)));
             read_sizeleft = 0;
@@ -296,11 +298,14 @@ bool ZsonHttp::CurlSendHeader() {
         }
     }
     read_sizeleft = 0;
+        long response_code;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+        Warning(Fmt("response code %ld\n", response_code));
 
     return true;
 }
 
-void ZsonHttp::WriteHeader(const string& path)
+void TsvHttp::WriteHeader(const string& path)
 {
 
     string names;
@@ -340,7 +345,7 @@ void ZsonHttp::WriteHeader(const string& path)
  * implementation must override this method but it can just
  * ignore calls if flushing doesn't align with its semantics.
  */
-bool ZsonHttp::DoFlush(double network_time)
+bool TsvHttp::DoFlush(double network_time)
 {
     if (connstate == SENDING_DATA) {
         SwitchBuffers();
@@ -354,7 +359,7 @@ bool ZsonHttp::DoFlush(double network_time)
  * going to shutdown. It is assumed that once this messages returns,
  * the thread can be safely terminated.
  */
-bool ZsonHttp::DoFinish(double network_time)
+bool TsvHttp::DoFinish(double network_time)
 {
     int running_handles=-1;
     Info("DoFinish");
@@ -376,10 +381,10 @@ bool ZsonHttp::DoFinish(double network_time)
  * Writer-specific output method implementing recording of one log
  * entry.
  */
-bool ZsonHttp::DoWrite(int num_fields, const Field* const * fields,
+bool TsvHttp::DoWrite(int num_fields, const Field* const * fields,
                          Value** vals)
 {
-    PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "ZsonHttp::DoWrite()");
+    PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "TsvHttp::DoWrite()");
 
     if (connstate == SENDING_HEADER || connstate == FINISHING) {
         Error(Fmt("Unexpected connstate %d in DoWrite", connstate));
@@ -403,7 +408,7 @@ bool ZsonHttp::DoWrite(int num_fields, const Field* const * fields,
             return true;
         }
 
-        PLUGIN_DBG_LOG(plugin::Zeek_ZsonHttp::plugin, "ZsonHttp::DoWrite() write buffer reached limit, sending");
+        PLUGIN_DBG_LOG(plugin::Zeek_TsvHttp::plugin, "TsvHttp::DoWrite() write buffer reached limit, sending");
 
         SwitchBuffers();
 
@@ -428,7 +433,7 @@ bool ZsonHttp::DoWrite(int num_fields, const Field* const * fields,
  * FinishedRotation() to signal the log manager that potential
  * postprocessors can now run.
  */
-bool ZsonHttp::DoRotate(const char* rotated_path, double open, double close, bool terminating)
+bool TsvHttp::DoRotate(const char* rotated_path, double open, double close, bool terminating)
 {
     // this is no-op as we're not a file writer
     return FinishedRotation();
@@ -443,7 +448,7 @@ bool ZsonHttp::DoRotate(const char* rotated_path, double open, double close, boo
  * optimized for performance. The current buffering state can be
  * queried via IsBuf().
  */
-bool ZsonHttp::DoSetBuf(bool enabled)
+bool TsvHttp::DoSetBuf(bool enabled)
 {
     // Nothing to do.
     return true;
@@ -452,7 +457,7 @@ bool ZsonHttp::DoSetBuf(bool enabled)
 /**
  * Triggered by regular heartbeat messages from the main thread.
  */
-bool ZsonHttp::DoHeartbeat(double network_time, double current_time)
+bool TsvHttp::DoHeartbeat(double network_time, double current_time)
 {
     if (connstate == WAITING) {
         connstate = CLOSED;
@@ -464,7 +469,7 @@ bool ZsonHttp::DoHeartbeat(double network_time, double current_time)
 }
 
 
-string ZsonHttp::Timestamp(double t)
+string TsvHttp::Timestamp(double t)
 {
     time_t teatime = time_t(t);
 
