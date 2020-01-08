@@ -1,0 +1,5 @@
+# Options for the TsvHttp writer.
+
+module LogTsvHttp;
+
+const url: string;

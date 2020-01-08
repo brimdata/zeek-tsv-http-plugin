@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(BroPluginZsonHttp)
+project(BroPluginTsvHttp)
 
 include(BroPlugin)
 
@@ -14,10 +14,10 @@ message("CURL_VERSION_STRING: ${CURL_VERSION_STRING}")
 
 if ( CURL_FOUND )
 
-    bro_plugin_begin(Zeek ZsonHttp)
-    bro_plugin_cc(src/ZsonHttp.cc)
+    bro_plugin_begin(Zeek TsvHttp)
+    bro_plugin_cc(src/TsvHttp.cc)
     bro_plugin_cc(src/Plugin.cc)
-    bro_plugin_bif(src/zsonhttp.bif)
+    bro_plugin_bif(src/tsvhttp.bif)
     bro_plugin_dist_files(README.md CHANGES COPYING VERSION)
     bro_plugin_link_library(${CURL_LIBRARIES})
     bro_plugin_end()

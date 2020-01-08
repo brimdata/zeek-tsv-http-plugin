@@ -1,4 +1,4 @@
-module LogZsonHttp;
+module LogTsvHttp;
 
 export {
        # The endpoint to POST logs to, for example http://my.server.com:8080/zeek
@@ -9,7 +9,7 @@ export {
 
        # If you want to explicitly only send certain :bro:type:`Log::ID`
        # streams, add them to this set.  If the set remains empty, all will
-       # be sent.  The :bro:id:`LogZsonHttp::exclude_logs` option
+       # be sent.  The :bro:id:`LogTsvHttp::exclude_logs` option
        # will remain in effect as well.
        const send_logs: set[Log::ID] &redef;
 }

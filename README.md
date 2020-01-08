@@ -1,4 +1,4 @@
-# Zeek ZsonHttp
+# Zeek TSV HTTP Plugin
 
 A Zeek plugin to POST logs over HTTP. The logs are posted in native
 TSV Ascii format. The plugin uses HTTP chunked encoding to first post
@@ -42,22 +42,22 @@ the plugin locally to the Zeek host it will run on).
 
 
 **From binary release:** If you're installing a binary release of the plugin (such as
-`Zeek_ZsonHttp-0.3.tar.gz`), then do the following after copying the
+`Zeek_TsvHttp-0.4.tar.gz`), then do the following after copying the
 package on to the Zeek host:
 
 ```sh
 $ sudo mkdir -p $(bro-config --plugin_dir)
 $ cd $(bro-config --plugin_dir)
-$ sudo tar oxzf path/to/plugin/Zeek_ZsonHttp-0.3.tar.gz
+$ sudo tar oxzf path/to/plugin/Zeek_TsvHttp-0.3.tar.gz
 ```
 
 
-To verify the installation, run `bro -N Zeek::ZsonHttp` and you will
+To verify the installation, run `bro -N Zeek::TsvHttp` and you will
 see the same output as below if the installation was succesful.
 
     ```sh
-    $ bro -N Zeek::ZsonHttp
-    Zeek::ZsonHttp - Plugin to POST Zeek logs via HTTP (dynamic, version 0.3)
+    $ bro -N Zeek::TsvHttp
+    Zeek::TsvHttp - Plugin to POST Zeek logs via HTTP (dynamic, version 0.3)
     ```
 
 ### Install with `bro-pkg`
@@ -72,10 +72,10 @@ To be documented.
 Add the following to the end of your `local.bro` file:
 
 ```
-@load Zeek/ZsonHttp
+@load Zeek/TsvHttp
 
 # Set this to the URL of your HTTP endpoint
-redef LogZsonHttp::url = "http://localhost:9867/space/default/zeek";
+redef LogTsvHttp::url = "http://localhost:9867/space/default/zeek";
 ```
 
 By default, all log streams will be sent.
@@ -87,33 +87,33 @@ For example, to send only the `conn` and `dns` logs:
 
 
 ```
-redef LogZsonHttp::send_logs = set(Conn::LOG, DNS::LOG);
+redef LogTsvHttp::send_logs = set(Conn::LOG, DNS::LOG);
 ```
 
 
 or to send all but the `loaded_scripts` log:
 ```
-redef LogZsonHttp::exclude_logs = set(LoadedScripts::LOG);
+redef LogTsvHttp::exclude_logs = set(LoadedScripts::LOG);
 ```
 
 #### Sending logs to different endpoints
 
-The `LogZsonHttp::url` endpoint can be overridden on a per-log basis
+The `LogTsvHttp::url` endpoint can be overridden on a per-log basis
 by instantiating a `Log::Filter` and passing the url in its
-configuration table. For example: 
+configuration table. For example:
 
 ```
-@load Zeek/ZsonHttp
+@load Zeek/TsvHttp
 
 # Set this to the URL of your HTTP endpoint
-redef LogZsonHttp::url = "http://localhost:9867/some/endpoint";
+redef LogTsvHttp::url = "http://localhost:9867/some/endpoint";
 
 event bro_init() &priority=-10
 {
     # handles HTTP
     local http_filter: Log::Filter = [
-        $name = "zson-http",
-        $writer = Log::WRITER_ZSONHTTP,
+        $name = tsv-http",
+        $writer = Log::WRITER_TSVHTTP,
         $path = "http",
         $config = table(["url"] = "http://localhost:9877/other/endpoint")
     ];
@@ -121,8 +121,8 @@ event bro_init() &priority=-10
 
     # handles DNS
     local dns_filter: Log::Filter = [
-        $name = "zson-dns",
-        $writer = Log::WRITER_ZSONHTTP,
+        $name = "tsv-dns",
+        $writer = Log::WRITER_TSVHTTP,
         $path = "dns",
         $config = table(["url"] = "http://localhost:9887/and/another/endpoint")
     ];

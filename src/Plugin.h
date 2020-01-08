@@ -1,12 +1,12 @@
 
-#ifndef BRO_PLUGIN_ZEEK_ZSONHTTP
-#define BRO_PLUGIN_ZEEK_ZSONHTTP
+#ifndef BRO_PLUGIN_ZEEK_TSVHTTP
+#define BRO_PLUGIN_ZEEK_TSVHTTP
 
-#include "ZsonHttp.h"
+#include "TsvHttp.h"
 #include <plugin/Plugin.h>
 
 namespace plugin {
-namespace Zeek_ZsonHttp {
+namespace Zeek_TsvHttp {
 
 class Plugin : public ::plugin::Plugin
 {

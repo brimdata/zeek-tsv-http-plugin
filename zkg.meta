@@ -1,7 +1,7 @@
 [package]
 description = A plugin that streams logs over HTTP, using the native Zeek TSV format.
-tags = log writer, logs, streaming, http, plugin, zson
-script_dir = scripts/Zeek/ZsonHttp
+tags = log writer, logs, streaming, http, plugin
+script_dir = scripts/Zeek/TsvHttp
 build_command = ./configure --bro-dist=%(bro_dist)s && make
 test_command = cd tests && btest
 depends =
