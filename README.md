@@ -46,7 +46,7 @@ package on to the Zeek host:
 ```sh
 $ sudo mkdir -p $(zeek-config --plugin_dir)
 $ cd $(zeek-config --plugin_dir)
-$ sudo tar oxzf path/to/plugin/Zeek_TsvHttp-0.3.tar.gz
+$ sudo tar oxzf path/to/plugin/Zeek_TsvHttp-0.5.tar.gz
 ```
 
 
@@ -55,7 +55,7 @@ see the same output as below if the installation was successful.
 
 ```sh
 $ zeek -N Zeek::TsvHttp
-Zeek::TsvHttp - Plugin to POST Zeek logs via HTTP (dynamic, version 0.3)
+Zeek::TsvHttp - Plugin to POST Zeek logs via HTTP (dynamic, version 0.5)
 ```
 
 ### Install with `zkg`
