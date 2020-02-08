@@ -1,6 +1,6 @@
 module LogTsvHttp;
 
-event bro_init() &priority=-10
+event zeek_init() &priority=-10
 	{
 	if ( url == "" )
 		return;

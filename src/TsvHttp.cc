@@ -57,7 +57,7 @@ bool TsvHttp::InitFormatter()
     formatter = 0;
     delete formatter;
 
-    // Use the default "Bro logs" format.
+    // Use the default "Zeek logs" format.
     databuf1.EnableEscaping();
     databuf1.AddEscapeSequence(separator);
     databuf2.EnableEscaping();

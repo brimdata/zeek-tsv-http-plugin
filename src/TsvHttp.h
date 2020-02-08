@@ -8,6 +8,7 @@
 #include "logging/WriterBackend.h"
 #include "threading/formatters/Ascii.h"
 #include "zlib.h"
+#include "Desc.h"
 
 const int version_major=0;
 const int version_minor=3;
