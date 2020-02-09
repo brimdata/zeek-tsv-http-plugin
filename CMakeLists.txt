@@ -1,9 +1,9 @@
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
-project(BroPluginTsvHttp)
+project(ZeekPluginTsvHttp)
 
-include(BroPlugin)
+include(ZeekPlugin)
 
 
 include(FindCURL)
@@ -14,13 +14,13 @@ message("CURL_VERSION_STRING: ${CURL_VERSION_STRING}")
 
 if ( CURL_FOUND )
 
-    bro_plugin_begin(Zeek TsvHttp)
-    bro_plugin_cc(src/TsvHttp.cc)
-    bro_plugin_cc(src/Plugin.cc)
-    bro_plugin_bif(src/tsvhttp.bif)
-    bro_plugin_dist_files(README.md CHANGES COPYING VERSION)
-    bro_plugin_link_library(${CURL_LIBRARIES})
-    bro_plugin_end()
+    zeek_plugin_begin(Zeek TsvHttp)
+    zeek_plugin_cc(src/TsvHttp.cc)
+    zeek_plugin_cc(src/Plugin.cc)
+    zeek_plugin_bif(src/tsvhttp.bif)
+    zeek_plugin_dist_files(README.md CHANGES COPYING VERSION)
+    zeek_plugin_link_library(${CURL_LIBRARIES})
+    zeek_plugin_end()
 
     file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" VERSION LIMIT_COUNT 1)
 

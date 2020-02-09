@@ -2,7 +2,7 @@
 description = A plugin that streams logs over HTTP, using the native Zeek TSV format.
 tags = log writer, logs, streaming, http, plugin
 script_dir = scripts/Zeek/TsvHttp
-build_command = ./configure --bro-dist=%(bro_dist)s && make
+build_command = ./configure --zeek-dist=%(zeek_dist)s && make
 test_command = cd tests && btest
 depends =
-  bro >=2.6
+  zeek >=3.0.0
