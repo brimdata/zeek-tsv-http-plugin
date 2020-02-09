@@ -40,7 +40,7 @@ the plugin locally to the Zeek host it will run on).
 
 
 **From binary release:** If you're installing a binary release of the plugin (such as
-`Zeek_TsvHttp-0.4.tar.gz`), then do the following after copying the
+`Zeek_TsvHttp-0.5.tar.gz`), then do the following after copying the
 package on to the Zeek host:
 
 ```sh
