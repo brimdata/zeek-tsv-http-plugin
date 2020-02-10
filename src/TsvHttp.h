@@ -11,7 +11,7 @@
 #include "Desc.h"
 
 const int version_major=0;
-const int version_minor=3;
+const int version_minor=5;
 
 namespace logging { namespace writer {
 
